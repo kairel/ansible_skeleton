@@ -1,0 +1,15 @@
+---
+- name: include intall tasks
+  include_tasks: 
+    file: customize_new_server.yml
+  when: install is defined
+        
+- name: include update keys
+  include_tasks: 
+    file: update_keys.yml
+  when: update_keys is defined
+
+- name: include clean logs
+  include_tasks: 
+    file: clean_logs.yml
+  when: clean_logs is defined

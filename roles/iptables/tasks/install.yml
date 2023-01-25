@@ -1,0 +1,22 @@
+# Iptables ----------------------------
+
+- name: add iptables as a service
+  template:
+    src: 'iptables.service.j2'
+    dest: '{{ iptables_service_path }}'
+  become: yes
+
+- name: add iptables restore conf
+  template:
+    src: 'iptables.conf.j2'
+    dest: '{{ iptables_conf_path }}'
+  become: yes
+
+
+- name: Add service to list service
+  ansible.builtin.systemd:
+    enabled: yes
+    name: '{{ iptables_service_name }}'
+    state: started
+    daemon_reload : yes
+  become: yes

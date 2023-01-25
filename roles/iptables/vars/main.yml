@@ -1,0 +1,4 @@
+---
+iptables_service_path:   /etc/systemd/system/iptables.service
+iptables_service_name:   iptables.service
+iptables_conf_path:      /etc/iptables.conf

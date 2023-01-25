@@ -1,0 +1,24 @@
+---
+- hosts: new_server
+  vars:
+    install: true
+  tasks:
+    - name: Info debug
+      ansible.builtin.debug:
+        msg: "Install new server"
+
+    - name: Include customize server
+      include_role:
+        name: common
+
+    - name: Include fail2ban
+      include_role:
+        name: fail2ban
+
+    - name: Include iptbales
+      include_role:
+        name: iptables
+
+    - name: Include docker
+      include_role:
+        name: docker

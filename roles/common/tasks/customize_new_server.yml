@@ -1,0 +1,78 @@
+---
+
+- name: Install package
+  apt:
+    pkg:
+      - sudo
+      - htop
+    update_cache: yes
+  become: yes
+
+- name: Create group
+  group:
+    name: '{{ group }}'
+    state: present
+  become: yes
+
+- name: Create user if not exist
+  user:
+    name: '{{ user }}'
+    shell: /bin/bash
+    home: '/home/{{ user }}'
+    comment: user
+    generate_ssh_key: yes
+    group: '{{ group }}'
+    groups: '{{ sudo_group }}'
+    password: "{{ password | password_hash('sha512') }}"
+  become: yes
+
+- name: Set authorized keys for app user
+  template:
+    src: 'authorized_keys.j2'
+    dest: '/home/{{ user }}/.ssh/authorized_keys'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+  become: yes
+
+- name: Insert/Update alias and history
+  blockinfile:
+    path: '/home/{{ user }}/.bashrc'
+    block: |
+      alias ll='ls -ailh'
+      export HISTTIMEFORMAT='%x %T '
+  become: yes
+
+- name: ssh with passwd auth
+  lineinfile:
+    path: '/etc/ssh/sshd_config'
+    regexp: '^(.*)PasswordAuthentication(.*)$'
+    line: 'PasswordAuthentication no'
+  become: yes
+
+- name: Set user sudo without password
+  template:
+    src: 'user.sudoers.j2'
+    dest: '/etc/sudoers.d/{{ user }}'
+  become: yes
+
+- name: Set a hostname
+  hostname:
+    name: '{{ hostname }}'
+  when: hostname is defined
+  become: true
+
+# Package + RVM----------------------------
+
+- name: Install package
+  apt:
+    pkg:
+      - curl
+      - rsync
+      - git
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - vlan
+      - telnet
+    update_cache: yes
+  become: yes

@@ -1,0 +1,9 @@
+sudo nano etc/logrotate.d/docker
+/var/lib/docker/containers/*/*.log {
+  rotate 7
+  daily
+  compress
+  missingok
+  delaycompress
+  copytruncate
+}

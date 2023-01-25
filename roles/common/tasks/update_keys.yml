@@ -1,0 +1,7 @@
+- name: Set authorized keys for app user
+  template:
+    src: 'authorized_keys.j2'
+    dest: '/home/{{ user }}/.ssh/authorized_keys'
+    owner: '{{ user }}'
+    group: '{{ group }}'
+  become: yes

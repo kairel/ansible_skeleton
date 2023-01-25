@@ -1,0 +1,13 @@
+- name: find old log file
+  ansible.builtin.find:
+    paths: /var/log/hadoop/hdfs/
+    patterns: '*.log.*'
+    age: 5d
+  register: files_to_delete
+
+- name: remove older than 10
+  file:
+    path: "{{ item.path }}" 
+    state: absent
+  with_items: "{{ files_to_delete.files }}"
+  become: true

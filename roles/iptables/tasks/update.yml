@@ -1,0 +1,15 @@
+# Iptables ----------------------------
+
+- name: update iptables restore conf
+  template:
+    src: 'iptables.conf.j2'
+    dest: '{{ iptables_conf_path }}'
+  become: yes
+
+
+- name: Restart service
+  ansible.builtin.systemd:
+    enabled: yes
+    name: '{{ iptables_service_name }}'
+    state: restarted
+  become: yes

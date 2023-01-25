@@ -1,0 +1,60 @@
+---
+
+- name: Install package
+  apt:
+    pkg:
+      - ca-certificates
+      - curl
+      - lsb-release
+      - apt-transport-https
+      - software-properties-common 
+      - gnupg2
+      - python3-pip
+    update_cache: yes
+  become: yes
+
+- name: add key for debian os
+  shell: 'curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add '
+
+- name: add repo key for debian os
+  shell: 'add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable"'
+  become: yes
+
+- name: Install docker
+  apt:
+    pkg:
+      - docker-ce
+    update_cache: yes
+  become: yes
+  
+- name: Add user to docker group
+  user:
+    name: '{{ user }}'
+    groups: docker 
+    append: yes
+  become: yes
+
+- name: Add logrotate for docker log
+  template:
+    src: 'logrotate/docker.j2'
+    dest: '/etc/logrotate.d/docker'
+    owner: 'root'
+    group: 'root'
+  become: yes
+
+#Install docker-compose
+- name: Download docker-compose binary
+  get_url:
+    url: 'https://github.com/docker/compose/releases/download/v2.5.1/docker-compose-linux-x86_64'
+    dest: '/tmp/'
+    mode: '0755'
+  become: true
+
+- name: move binary
+  shell: 'mv /tmp/docker-compose-linux-x86_64 /usr/local/bin/docker-compose'
+  become: yes
+
+- name: change permission
+  shell: 'chmod +x /usr/local/bin/docker-compose'
+  become: yes
+
