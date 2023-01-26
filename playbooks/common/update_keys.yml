@@ -1,0 +1,12 @@
+---
+- hosts: kairel
+  vars:
+    update_keys: true
+  tasks:
+    - name: Info debug
+      ansible.builtin.debug:
+        msg: "Update ssh keys"
+
+    - name: Include ssh update keys
+      include_role:
+        name: common
